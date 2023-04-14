@@ -8,6 +8,6 @@ The user can select the high score screen at the start of the quiz again to view
 
 ## Link and preview
 
-https://github.com/hculp/timed-quiz
+https://hculp.github.io/timed-quiz/
 
 ![Alt text](./assets/images/preview-timed-quiz.gif "timed quiz preview")
