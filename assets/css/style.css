@@ -4,7 +4,8 @@ body {
 
 h1, 
 h2 {
-    color: #313740;
+    color: #710f40;
+    font-weight: 900;
 }
 
 a {
@@ -15,12 +16,13 @@ a:hover {
     color: #99B8BF;
 }
 
+
 .btn:focus, .btn:active, .btn:visited{
     outline: none !important;
     box-shadow: none !important;
     background-color: #343a40;
 }
-.custom-btn{
+.custom-btn {
     background-color: purple;
 }
 
@@ -45,6 +47,6 @@ p {
     color: #4D5159;
 }
 
-.form-control .my-form {
+/* .form-control .my-form {
     $input-border-width: 50vw;
-}
+} */

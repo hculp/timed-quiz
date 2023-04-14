@@ -41,8 +41,8 @@ const questions = [
     },
     {
         question: "How to write an IF statement in JavaScript?",
-        choices: ["1. if i == 5 then", "2. if i = 5 then", "3. if(i == 5)", "4. if i = 5"],
-        answer: "3. if(i == 5)"
+        choices: ["1. if i == 5 then", "2. if i = 5 then", "3. if (i == 5)", "4. if i = 5"],
+        answer: "3. if (i == 5)"
     },
     {
         question: "How do you add a comment in a JavaScript?",
@@ -66,10 +66,10 @@ const questions = [
     }
 ];
 
-
+// Get and set container elements
 var timer = document.getElementById("timer");
 var timeLeft = document.getElementById("timeLeft");
-var startDiv = document.getElementById("start");
+var startContainer = document.getElementById("start");
 var startQuizBtn = document.getElementById("start-quiz-button");
 var questionContainer = document.getElementById("question-container");
 var questionTitle = document.getElementById("questionTitle");
@@ -89,36 +89,44 @@ var clearHighScoreBtn = document.getElementById("clearHighScoreBtn");
 var viewHighScore = document.getElementById("viewHighScore");
 var listOfHighScores = document.getElementById("listOfHighScores");
 
-var correctAns = 0;
+
 var questionNum = 0;
 var scoreResult;
 var questionIndex = 0;
+var totalTime = 130;
 
-var totalTime = 120;
+// Starts quiz
 function newQuiz() {
     questionIndex = 0;
-    totalTime = 120;
+    totalTime = 130;
     timeLeft.textContent = totalTime;
     initialInput.textContent = "";
 
-    startDiv.style.display = "none";
+    startContainer.style.display = "none";
     questionContainer.style.display = "block";
     timer.style.display = "block";
 
     var startTimer = setInterval(function() {
-        totalTime--;
+        timeLeft.textContent = totalTime;
+        totalTime--; 
         timeLeft.textContent = totalTime;
         if(totalTime <= 0) {
             clearInterval(startTimer);
             if (questionIndex < questions.length - 1) {
                 gameOver();
             }
+            gameOver();
+        }
+        if (questionIndex > questions.length - 1) {
+            clearInterval(startTimer);
+            gameOver();
         }
     },1000);
 
     showQuiz();
 };
 
+// Shows next quiz con
 function showQuiz() {
     nextQuestion();
 }
@@ -132,35 +140,40 @@ function nextQuestion() {
 }
 
 function checkAnswer(answer) {
-
+    // Displays line break and adds style elements
     var lineBreak = document.getElementById("lineBreak");
     lineBreak.style.display = "inline-block";
     lineBreak.style.margin = "auto";
-    lineBreak.style.width = "50vw";
+    lineBreak.style.width = "40vw";
+    // The checked answer text (correct/wrong) display is turned on
     answerCheck.style.display = "block";
 
     if (questions[questionIndex].answer === questions[questionIndex].choices[answer]) {
-        // correct answer, add 1 score to final score
-        correctAns++;
+        // Display correct is answer is correct
         answerCheck.textContent = "Correct!";
     } else {
-        // wrong answer, deduct 10 second from timer
+        // Display wrong if answer is wrong
+        // Deducts 10 seconds off timer for a wrong answer
         totalTime -= 10;
         timeLeft.textContent = totalTime;
-        answerCheck.textContent = "Wrong! The correct answer is: " + questions[questionIndex].answer;
+        answerCheck.textContent = "Wrong!";
     }
 
     questionIndex++;
-    // Checks if any questions are left, otherwise ends game.
+    // Checks if any questions are left or timer hits zero in order to end game.
     if (questionIndex < questions.length) {
         nextQuestion();
+    } else if (totalTime<=0) {
+        timeLeft.textContent = 0;
+        scoreResult = 0;        
+        gameOver();
     } else {
-        timer.textContent = totalTime;
         scoreResult = totalTime;
         gameOver();
     }
 }
 
+// When the user selects and answer, that answer is then passed for checking
 function choose1() { checkAnswer(0); }
 
 function choose2() { checkAnswer(1); }
@@ -173,27 +186,27 @@ function choose4() { checkAnswer(3); }
 function gameOver() {
     summary.style.display = "block";
     questionContainer.style.display = "none";
-    startDiv.style.display = "none";
+    startContainer.style.display = "none";
     // Shows final score
     finalScore.textContent = scoreResult;
 }
 
-// enter initial and store highscore in local storage
+// Enter initial and store highscore into local storage
 function storeHighScores(event) {
     event.preventDefault();
 
-    // stop function is initial is blank
+    // Alerts user to put valid input before backing out
     if (initialInput.value === "") {
         alert("Please enter your initials!");
         return;
     } 
 
-    startDiv.style.display = "none";
+    startContainer.style.display = "none";
     timer.style.display = "none";
     summary.style.display = "none";
     highScoreSection.style.display = "block";   
 
-    // store scores into local storage
+    // Gets scores stored into into local storage
     var savedHighScores = localStorage.getItem("high scores");
     var scoresArray;
 
@@ -210,19 +223,19 @@ function storeHighScores(event) {
 
     scoresArray.push(userScore);
 
-    // stringify array in order to store in local
+    // Stores scores in local storage
     var scoresArrayString = JSON.stringify(scoresArray);
     window.localStorage.setItem("high scores", scoresArrayString);
     
-    // show current highscores
+    // Then shows high scores
     showHighScores();
 }
 
-// function to show high scores
+// Shows high scores
 var i = 0;
 function showHighScores() {
 
-    startDiv.style.display = "none";
+    startContainer.style.display = "none";
     timer.style.display = "none";
     questionContainer.style.display = "none";
     summary.style.display = "none";
@@ -245,29 +258,31 @@ function showHighScores() {
     }
 }
 
-/**
- * ADD EVENT LISTENERS
- */
-
+// Event listeners
+// Quiz selections
 startQuizBtn.addEventListener("click", newQuiz);
 choice1.addEventListener("click", choose1);
 choice2.addEventListener("click", choose2);
 choice3.addEventListener("click", choose3);
 choice4.addEventListener("click", choose4);
 
+// Start quiz listener
 submitInitialBtn.addEventListener("click", function(event){ 
     storeHighScores(event);
 });
 
+// View High Scores listener
 viewHighScore.addEventListener("click", function(event) { 
     showHighScores(event);
 });
 
+// Back button from high scores page listener
 goBackBtn.addEventListener("click", function() {
-    startDiv.style.display = "block";
+    startContainer.style.display = "block";
     highScoreSection.style.display = "none";
 });
 
+// Clear all high scores listener
 clearHighScoreBtn.addEventListener("click", function(){
     window.localStorage.removeItem("high scores");
     listOfHighScores.innerHTML = "High Scores Cleared!";
